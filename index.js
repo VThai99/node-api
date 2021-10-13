@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const cookieparser = require("cookie-parser");
 const productRoutes = require("./src/routes/productRoutes");
 const categoryRoutes = require("./src/routes/cartegoryRoutes");
+const userRoutes = require("./src/routes/userRoutes");
 var conn = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -32,6 +33,8 @@ app.use(function (req, res, next) {
   req.conn = conn;
   next();
 });
+app.use("/api/user", userRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/category", categoryRoutes);
+
 module.exports = app;

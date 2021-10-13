@@ -42,7 +42,6 @@ const createProduct = async (req, res, next) => {
     });
   }
 };
-
 const getProductId = async (req, res, next) => {
   try {
     var db = req.conn;
