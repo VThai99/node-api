@@ -15,7 +15,7 @@ const createAccount = async (req, res, next) => {
       "select * from user where `email` =?",
       email,
       (err, respond) => {
-        if (err) console.log("error");
+        if (err) console.log("error email");
         else {
           if (respond.length > 0) {
             res.send({
@@ -27,7 +27,7 @@ const createAccount = async (req, res, next) => {
               "insert into user set ?",
               [data],
               (err, respond) => {
-                if (err) console.log("error");
+                if (err) console.log("error insert");
                 else
                   res.send({
                     status: 200,
