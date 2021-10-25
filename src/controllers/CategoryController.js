@@ -1,3 +1,10 @@
+// const cloudinary = require('cloudinary').v2
+// const streamifier = require('streamifier')
+// cloudinary.config({ 
+//   cloud_name: 'cloudygod', 
+//   api_key: '334367223732826', 
+//   api_secret: 'Bjfc6cm80qPbwqkjP2d2QOggwfc'
+// });
 const getAllCategory = async (req, res, next) => {
   try {
     var db = req.conn;
@@ -20,12 +27,27 @@ const getAllCategory = async (req, res, next) => {
 const createCategory = async (req, res, next) => {
   try {
     var db = req.conn;
-    var data = {
-      name: req.body.name,
-      logo: req.file.filename,
-      trailer: req.file.filename,
-    };
-    console.log(data);
+    console.log(req);
+    // cloudinary.uploader.upload(req.file.path).then((ress)=>{
+    //   res.send({
+    //     message: 'success',
+    //     data: ress
+    //   })
+    // }).catch((errr)=>{
+    //   res.send({
+    //     status: 500,
+    //     message: 'failure'
+    //   })
+    // })
+
+    // aaaaa
+    
+    // var data = {
+    //   name: req.body.name,
+    //   logo: `/image/${req.file.filename}`,
+    //   video: 'adfdf',
+    // };
+    // console.log(req.file);
     // let results = db.query(
     //   "insert into category set ?",
     //   [data],

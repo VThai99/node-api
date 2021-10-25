@@ -4,7 +4,8 @@ const multer = require("multer");
 const path = require("path");
 const controller = require("../controllers/CategoryController");
 
-const storageImage = multer.diskStorage({
+
+const storage = multer.diskStorage({
   destination: "./src/category/image/",
   filename: (req, file, cb) => {
     return cb(
@@ -14,25 +15,25 @@ const storageImage = multer.diskStorage({
   },
 });
 
-const uploadImage = multer({
-  storage: storageImage,
+const upload = multer({
+  storage: storage,
 });
 
-const storageVideo = multer.diskStorage({
-  destination: "./src/category/video/",
-  filename: (req, file, cb) => {
-    return cb(
-      null,
-      `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`
-    );
-  },
-});
+// const storageVideo = multer.diskStorage({
+//   destination: "./src/category/video/",
+//   filename: (req, file, cb) => {
+//     return cb(
+//       null,
+//       `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`
+//     );
+//   },
+// });
 
-const uploadVideo = multer({
-  storage: storageVideo
-});
+// const uploadVideo = multer({
+//   storage: storageVideo
+// });
 
 router.get("/list", controller.getAllCategory);
-router.post("/add",uploadVideo.single("trailer"),controller.createCategory);
+router.post("/add",controller.createCategory);
 
 module.exports = router;
