@@ -90,7 +90,11 @@ const login = async (req, res, next) => {
                 });
               } else {
                 const theToken = jwt.sign(
-                  { id: respond[0].id },
+                  {
+                    id: respond[0].id,
+                    name: respond[0].name,
+                    email: respond[0].email,
+                  },
                   "the-super-strong-secrect",
                   { expiresIn: "1h" }
                 );
