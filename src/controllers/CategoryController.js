@@ -17,21 +17,6 @@ const getAllCategory = async (req, res, next) => {
     });
   }
 };
-const getAllImage = async (req, res) => {
-  const { resources } = await cloudinary.search
-    .expression("folder:Assets")
-    .sort_by("public_id", "desc")
-    .max_results(30)
-    .execute();
-
-  const publicIds = resources.map((file) => file.public_id);
-  res.send(publicIds);
-};
-
-const uploadImage = (req, res, next) => {
-    console.log(req.file);
-};
-
 const createCategory = async (req, res, next) => {
   try {
     var db = req.conn;
@@ -57,9 +42,141 @@ const createCategory = async (req, res, next) => {
     });
   }
 };
+const deleteCategory = async (req, res, next) => {
+  try {
+    var db = req.conn;
+    var id = req.params.id;
+    let checkExist = db.query(
+      "select * from category where id = ?",
+      id,
+      (err, results) => {
+        if (err) console.log("error check exist");
+        else {
+          if (results.length <= 0) {
+            res.send({
+              status: 404,
+              message: "not exist",
+            });
+          } else {
+            let results = db.query(
+              "delete from category where id = ?",
+              id,
+              (err, respond) => {
+                if (err) console.log("error query");
+                else {
+                  let deleteAllProduct = db.query(
+                    "delete from product where cate_id = ?",
+                    id,
+                    (err, deleteProduct) => {
+                      if (err)
+                        console.log("error when delete product with cate id");
+                      else {
+                        res.send({
+                          status: 200,
+                          message: "Delete success",
+                        });
+                      }
+                    }
+                  );
+                }
+              }
+            );
+          }
+        }
+      }
+    );
+  } catch (err) {
+    res.send({ message: "something wrong" });
+  }
+};
+const updateCategory = async (req, res, next) => {
+  try {
+    var db = req.conn;
+    var id = req.params.id;
+    var dataUpdate = {
+      name: req.body.name,
+      image: req.file.path,
+    };
+    let checkExist = db.query(
+      "select * from category where id = ?",
+      id,
+      (err, results) => {
+        if (err) console.log("error check exist");
+        else {
+          if (results.length <= 0) {
+            res.send({
+              status: 404,
+              message: "not exist",
+            });
+          } else {
+            let updateQuery = db.query(
+              "update category set ? where id = ?",
+              [dataUpdate, id],
+              (err, responds) => {
+                if (err) console.log("error uodate query");
+                else {
+                  res.send({
+                    status: 200,
+                    message: "update success",
+                  });
+                }
+              }
+            );
+          }
+        }
+      }
+    );
+  } catch (err) {
+    res.send({
+      message: "something wrong",
+    });
+  }
+};
+const getProductInCate = async (req, res, next) => {
+  try {
+    var db = req.conn;
+    var id = req.params.id;
+    let checkExist = db.query(
+      "select * from category where id = ?",
+      id,
+      (err, cate) => {
+        if (err) console.log("error check exist");
+        else {
+          if (cate.length <= 0) {
+            res.send({
+              status: 404,
+              message: "not exist",
+            });
+          } else {
+            let updateQuery = db.query(
+              "select * from product where cate_id = ?",
+              id,
+              (err, products) => {
+                if (err) console.log("error query");
+                else {
+                  res.send({
+                    status: 200,
+                    message: "update success",
+                    data: {
+                      category: cate[0],
+                      product: products,
+                    },
+                  });
+                }
+              }
+            );
+          }
+        }
+      }
+    );
+  } catch (err) {
+    res.send({ message: "something wrong" });
+  }
+};
 module.exports = {
   getAllCategory,
   createCategory,
-  getAllImage,
-  uploadImage,
+  deleteCategory,
+  updateCategory,
+  getProductInCate
 };

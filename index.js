@@ -14,17 +14,13 @@ var conn = mysql.createPool({
   password: process.env.PASSWORD,
   database: process.env.DATABASE,
 });
-
+// mysql://bddaf688c4a62a:730c2465@us-cdbr-east-04.cleardb.com/heroku_62ef357af56d406?reconnect=true
 const corsOptions = {
   origin: "*",
   credentials: true,
   optionSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
-// conn.connect(function (err) {
-//   if (err) console.log("err connect to db");
-//   console.log("connect success");
-// });
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {

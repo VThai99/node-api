@@ -3,24 +3,11 @@ const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 const controller = require("../controllers/ProductController");
-
-const storage = multer.diskStorage({
-  destination: "./src/image/",
-  filename: (req, file, cb) => {
-    return cb(
-      null,
-      `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`
-    );
-  },
-});
-
-const upload = multer({
-  storage: storage,
-});
+const uploadFiler = require("../common/cloudy/cloudinaryProduct")
 
 router.get("/list", controller.getAllProduct);
-router.post("/add", upload.single("image"), controller.createProduct);
+router.post("/add", uploadFiler.single("image"), controller.createProduct);
 router.get("/:id", controller.getProductId);
-router.put("/:id", upload.single("image"), controller.updateProduct);
-router.delete("/:id",controller.deleteProduct)
+router.put("/update/:id", uploadFiler.single("image"), controller.updateProduct);
+router.delete("/delete/:id",controller.deleteProduct)
 module.exports = router;

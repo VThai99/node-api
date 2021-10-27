@@ -10,11 +10,7 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  destination: 'category',
-  allowedFormats: ["jpg", "png", "gif"],
-  filename: (req, res, cb) => {
-    cb(null, file.originalname);
-  },
+  params: { folder: "category"},
 });
 const uploadCloud = multer({ storage });
 module.exports = uploadCloud;
