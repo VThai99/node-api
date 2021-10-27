@@ -37,7 +37,7 @@ app.use(function (req, res, next) {
   next();
 });
 app.use("/api/user", userRoutes);
-app.use("/api/product", productRoutes);
-app.use("/api/category", categoryRoutes);
+// app.use("/api/product", productRoutes);
+// app.use("/api/category", categoryRoutes);
 
 module.exports = app;
