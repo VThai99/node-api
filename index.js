@@ -9,10 +9,10 @@ const userRoutes = require("./src/routes/userRoutes");
 require('dotenv').config()
 const cors = require("cors");
 var conn = mysql.createPool({
-  host: process.env.HOST,
-  user: process.env.USER,
-  password: process.env.PASSWORD,
-  database: process.env.DATABASE,
+  host: "us-cdbr-east-04.cleardb.com",
+  user: "bddaf688c4a62a",
+  password: "730c2465",
+  database: "heroku_62ef357af56d406",
 });
 // mysql://bddaf688c4a62a:730c2465@us-cdbr-east-04.cleardb.com/heroku_62ef357af56d406?reconnect=true
 const corsOptions = {
