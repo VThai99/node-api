@@ -1,19 +1,51 @@
-const getAllCategory = async (req, res, next) => {
+const {
+  likeClause,
+  removeLastAnd,
+} = require("../common/query/make_greate_query");
+
+const getAllCategory = (req, res, next) => {
   try {
     var db = req.conn;
-    let results = db.query("select * from category", (err, respond) => {
-      if (err) console.log("error");
+    var page =
+      isNaN(parseInt(req.query.page)) || parseInt(req.query.page) === 0
+        ? 1
+        : parseInt(req.query.page);
+    var pageSize =
+      isNaN(parseInt(req.query.pageSize)) || parseInt(req.query.pageSize) === 0
+        ? 20
+        : parseInt(req.query.pageSize);
+    var fillName = req.query.name ? req.query.name.replace(/"/g, "") : null;
+    var skipNumber = (page - 1) * pageSize;
+    sqlQuery = `select * from category 
+    where 
+    ${likeClause("name", fillName)}`;
+    let getAllElements = db.query(removeLastAnd(sqlQuery), (err, orders) => {
+      if (err) console.log("err when get all element");
       else {
-        res.send({
-          status: 200,
-          message: "Success",
-          data: respond,
-        });
+        var totalElements = orders.length;
+        let results = db.query(
+          `${removeLastAnd(sqlQuery)} limit ? offset ?`,
+          [pageSize, skipNumber],
+          (err, respond) => {
+            if (err) console.log("error");
+            else {
+              let currentElement = respond.length;
+              res.send({
+                status: 200,
+                message: "Success",
+                data: respond,
+                currentPage: page,
+                currentElement: currentElement,
+                totalElements: totalElements,
+              });
+            }
+          }
+        );
       }
     });
   } catch (err) {
     res.send({
-      message: "Something wrong",
+      message: "something wrong",
     });
   }
 };
@@ -156,7 +188,7 @@ const getProductInCate = async (req, res, next) => {
                 else {
                   res.send({
                     status: 200,
-                    message: "update success",
+                    message: "success",
                     data: {
                       category: cate[0],
                       product: products,
@@ -178,5 +210,5 @@ module.exports = {
   createCategory,
   deleteCategory,
   updateCategory,
-  getProductInCate
+  getProductInCate,
 };

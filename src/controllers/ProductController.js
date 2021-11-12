@@ -1,18 +1,127 @@
-const getAllProduct = async (req, res, next) => {
+const {
+  likeClause,
+  removeLastAnd,
+  equalClause,
+} = require("../common/query/make_greate_query");
+const getAllProduct = (req, res, next) => {
   try {
     var db = req.conn;
-    let results = db.query("select * from product", (err, respond) => {
-      if (err) console.log("error");
-      else
-        res.send({
-          status: 200,
-          message: "success",
-          data: respond,
-        });
+    var page =
+      isNaN(parseInt(req.query.page)) || parseInt(req.query.page) === 0
+        ? 1
+        : parseInt(req.query.page);
+    var pageSize =
+      isNaN(parseInt(req.query.pageSize)) || parseInt(req.query.pageSize) === 0
+        ? 20
+        : parseInt(req.query.pageSize);
+    var skipNumber = (page - 1) * pageSize;
+    var fillPName = req.query.product
+      ? req.query.product.replace(/"/g, "")
+      : null;
+    var fillBName = req.query.brand ? req.query.brand.replace(/"/g, "") : null;
+    var fillCName = req.query.category
+      ? req.query.category.replace(/"/g, "")
+      : null;
+    var fillCId = req.query.category_id
+      ? req.query.category_id.replace(/"/g, "")
+      : null;
+    var fillBId = req.query.brand_id
+      ? req.query.brand_id.replace(/"/g, "")
+      : null;
+    sqlQuery = `select p.*, c.name as category_name, b.name as brand_name 
+    from 
+    product p left join category c on p.cate_id = c.id left join brand b on p.brand_id = b.id 
+      where 
+     ${likeClause("p.name", fillPName)} 
+     ${likeClause("b.name", fillBName)} 
+     ${likeClause("c.name", fillCName)} 
+     ${equalClause("b.id", fillBId)} 
+     ${equalClause("c.id", fillCId)}`;
+    let getAllElements = db.query(removeLastAnd(sqlQuery), (err, orders) => {
+      if (err) console.log("err when get all element");
+      else {
+        var totalElements = orders.length;
+        let results = db.query(
+          `${removeLastAnd(sqlQuery)} limit ? offset ?`,
+          [pageSize, skipNumber],
+          (err, respond) => {
+            if (err) console.log("error");
+            else {
+              let currentElement = respond.length;
+              res.send({
+                status: 200,
+                message: "Success",
+                data: respond,
+                currentPage: page,
+                currentElement: currentElement,
+                totalElements: totalElements,
+              });
+            }
+          }
+        );
+      }
     });
   } catch (err) {
     res.send({
-      message: "Something wrong",
+      message: "something wrong",
+    });
+  }
+};
+const getAllProductClient = (req, res, next) => {
+  try {
+    var db = req.conn;
+    var page =
+      isNaN(parseInt(req.query.page)) || parseInt(req.query.page) === 0
+        ? 1
+        : parseInt(req.query.page);
+    var pageSize =
+      isNaN(parseInt(req.query.pageSize)) || parseInt(req.query.pageSize) === 0
+        ? 20
+        : parseInt(req.query.pageSize);
+    var skipNumber = (page - 1) * pageSize;
+    var fillPName = req.query.product
+      ? req.query.product.replace(/"/g, "")
+      : null;
+    var fillCId = req.query.category_id
+      ? req.query.category_id.replace(/"/g, "")
+      : null;
+    var fillBId = req.query.brand_id
+      ? req.query.brand_id.replace(/"/g, "")
+      : null;
+    sqlQuery = `select p.*, c.name as category_name, b.name as brand_name 
+    from 
+    product p left join category c on p.cate_id = c.id left join brand b on p.brand_id = b.id 
+      where 
+     ${likeClause("p.name", fillPName)} 
+     ${equalClause("b.id", fillBId)} 
+     ${equalClause("c.id", fillCId)}`;
+    let getAllElements = db.query(removeLastAnd(sqlQuery), (err, orders) => {
+      if (err) console.log("err when get all element");
+      else {
+        var totalElements = orders.length;
+        let results = db.query(
+          `${removeLastAnd(sqlQuery)} limit ? offset ?`,
+          [pageSize, skipNumber],
+          (err, respond) => {
+            if (err) console.log("error");
+            else {
+              let currentElement = respond.length;
+              res.send({
+                status: 200,
+                message: "Success",
+                data: respond,
+                currentPage: page,
+                currentElement: currentElement,
+                totalElements: totalElements,
+              });
+            }
+          }
+        );
+      }
+    });
+  } catch (err) {
+    res.send({
+      message: "something wrong",
     });
   }
 };
@@ -24,7 +133,8 @@ const createProduct = async (req, res, next) => {
       image: req.file.path,
       price: req.body.price,
       cate_id: req.body.cate_id,
-      quantity: req.body.quantity,
+      brand_id: req.body.brand_id,
+      quantity: req.body.quantity ? req.body.quantity : 0,
     };
     let checkExisCate = db.query(
       "select * from category where id = ?",
@@ -38,16 +148,32 @@ const createProduct = async (req, res, next) => {
               message: "cate id can't found",
             });
           } else {
-            let results = db.query(
-              "insert into product set ?",
-              [data],
-              (err, respond) => {
-                if (err) console.log("error");
-                else
-                  res.send({
-                    status: 200,
-                    message: "create success",
-                  });
+            let checkExisBrand = db.query(
+              "select * from brand where id = ?",
+              req.body.brand_id,
+              (err, brand) => {
+                if (err) console.log("error query brand exist");
+                else {
+                  if (brand.length <= 0) {
+                    res.send({
+                      status: 404,
+                      message: "brand id can't found",
+                    });
+                  } else {
+                    let results = db.query(
+                      "insert into product set ?",
+                      [data],
+                      (err, respond) => {
+                        if (err) console.log("error");
+                        else
+                          res.send({
+                            status: 200,
+                            message: "create success",
+                          });
+                      }
+                    );
+                  }
+                }
               }
             );
           }
@@ -93,7 +219,7 @@ const updateProduct = async (req, res, next) => {
       image: req.file.path,
       price: req.body.price,
       cate_id: req.body.cate_id,
-      quantity: req.body.quantity,
+      quantity: req.body.quantity ? req.body.quantity : 0,
     };
     let checkExist = db.query(
       "select * from product where id = ?",
@@ -119,16 +245,32 @@ const updateProduct = async (req, res, next) => {
                       message: "cate id can't found",
                     });
                   } else {
-                    let results = db.query(
-                      `update product set ? where id = ?`,
-                      [data, id],
-                      (err, respond) => {
-                        if (err) console.log("error");
+                    let checkExisBrand = db.query(
+                      "select * from brand where id = ?",
+                      req.body.brand_id,
+                      (err, brand) => {
+                        if (err) console.log("error query brand exist");
                         else {
-                          res.send({
-                            status: 200,
-                            message: "update success",
-                          });
+                          if (brand.length <= 0) {
+                            res.send({
+                              status: 404,
+                              message: "brand id can't found",
+                            });
+                          } else {
+                            let results = db.query(
+                              `update product set ? where id = ?`,
+                              [data, id],
+                              (err, respond) => {
+                                if (err) console.log("error");
+                                else {
+                                  res.send({
+                                    status: 200,
+                                    message: "update success",
+                                  });
+                                }
+                              }
+                            );
+                          }
                         }
                       }
                     );
@@ -172,6 +314,7 @@ const deleteProduct = async (req, res, next) => {
 };
 module.exports = {
   getAllProduct,
+  getAllProductClient,
   createProduct,
   getProductId,
   updateProduct,
