@@ -27,6 +27,8 @@
     "nodemon": "^2.0.12",
     "path": "^0.12.7",
     "smtp": "^0.1.4",
-    "streamifier": "^0.1.1"
+    "streamifier": "^0.1.1",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.1.6"
   }
 }

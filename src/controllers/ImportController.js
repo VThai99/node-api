@@ -23,9 +23,9 @@ const getAllImport = (req, res, next) => {
     var fillUName = req.query.importer
       ? req.query.importer.replace(/"/g, "")
       : null;
-    var sqlQuery = `select i.*, u.name as user_name, p.name as product_name 
+    var sqlQuery = `select i.*, u.name as user_name, p.name as product_name, pt.type as product_type, pt.color as product_color 
     from 
-    import i left join user u on i.importer = u.id left join product p on i.product_id = p.id
+    import i left join user u on i.importer = u.id left join product_type pt on i.product_id = pt.id left join product p on p.id = pt.product_id
     where 
      ${likeClause("p.name", fillPName)} 
      ${likeClause("u.name", fillUName)} 
@@ -36,7 +36,7 @@ const getAllImport = (req, res, next) => {
       else {
         var totalElements = orders.length;
         let results = db.query(
-          `${removeLastAnd(sqlQuery)} limit ? offset ?`,
+          `${removeLastAnd(sqlQuery)} order by time_import desc limit ? offset ?`,
           [pageSize, skipNumber],
           (err, respond) => {
             if (err) console.log("error");
@@ -76,7 +76,7 @@ const createImport = (req, res, next) => {
       importer: req.body.importer,
     };
     let checkProductExist = db.query(
-      "select * from product where id = ?",
+      "select * from product_type where id = ?",
       productId,
       (err, product) => {
         if (err) console.log("error when check exist product");
@@ -91,7 +91,7 @@ const createImport = (req, res, next) => {
               quantity: product[0].quantity + quantityImport,
             };
             let updateProduct = db.query(
-              "update product set ? where id = ?",
+              "update product_type set ? where id = ?",
               [dataUpdate, productId],
               (err, updateStatus) => {
                 if (err) console.log("error when update product");

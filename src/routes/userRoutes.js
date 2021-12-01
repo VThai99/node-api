@@ -5,8 +5,119 @@ const { validationResult } = require("express-validator");
 const controller = require("../controllers/UserController");
 const authorize = require("../common/authorization/authorization-middleware");
 
+/**
+ * @swagger
+ * tags:
+ *  name: User
+ *  description: this for user api
+ * /user:
+ *  get:
+ *      tags: [User]
+ *      security: 
+ *          - Bearer: []
+ *      parameters:
+ *          - name: page
+ *            default: 1
+ *            in: query
+ *            schema:
+ *                  type: integer
+ *          - name: pageSize
+ *            default: 10
+ *            in: query
+ *            schema:
+ *                  type: integer
+ *      responses:
+ *          default:
+ *              description: this is the default response
+ */
 router.get("", authorize("ADMIN"), controller.getAllUser);
+
+/**
+ * @swagger
+ * tags:
+ *  name: User
+ *  description: this for user api
+ * /user/signup:
+ *  post:
+ *      tags: [User]
+ *      parameters:
+ *          - name: body
+ *            in: body
+ *            schema:
+ *                  type: object
+ *                  properties:
+ *                      name:
+ *                          type: string
+ *                      phone:
+ *                          type: string
+ *                      email:
+ *                          type: string
+ *                      role:
+ *                          type: string
+ *                      password:
+ *                          type: string
+ *            required:
+ *                  - name
+ *                  - phone
+ *                  - role
+ *                  - email
+ *                  - password
+ *      responses:
+ *          default:
+ *              description: this is the default response
+ */
 router.post("/signup", controller.createAccount);
+
+/**
+ * @swagger
+ * tags:
+ *  name: User
+ *  description: this for user api
+ * /user/login:
+ *  post:
+ *      tags: [User]
+ *      parameters:
+ *          - name: body
+ *            in: body
+ *            schema:
+ *                  type: object
+ *                  properties:
+ *                      email:
+ *                          type: string
+ *                      password:
+ *                          type: string
+ *            required:
+ *                  - email
+ *                  - password
+ *      responses:
+ *          default:
+ *              description: this is the default response
+ */
 router.post("/login", controller.login);
-router.post("/vertify-email",controller.vertifyEmail)
+
+/**
+ * @swagger
+ * tags:
+ *  name: User
+ *  description: this for user api
+ * /user/vertify-email:
+ *  post:
+ *      tags: [User]
+ *      parameters:
+ *          - name: body
+ *            in: body
+ *            schema:
+ *                  type: object
+ *                  properties:
+ *                      email:
+ *                          type: string
+ *      
+ *            required:
+ *                  - email
+ *          
+ *      responses:
+ *          default:
+ *              description: this is the default response
+ */
+router.post("/vertify-email", controller.vertifyEmail);
 module.exports = router;
