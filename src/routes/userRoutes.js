@@ -13,7 +13,7 @@ const authorize = require("../common/authorization/authorization-middleware");
  * /user:
  *  get:
  *      tags: [User]
- *      security: 
+ *      security:
  *          - Bearer: []
  *      parameters:
  *          - name: page
@@ -111,10 +111,10 @@ router.post("/login", controller.login);
  *                  properties:
  *                      email:
  *                          type: string
- *      
+ *
  *            required:
  *                  - email
- *          
+ *
  *      responses:
  *          default:
  *              description: this is the default response
