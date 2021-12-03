@@ -38,7 +38,7 @@ const swaggerOptions = {
     swagger: "2.0",
     info: {
       title: "API God",
-      description: "Chúa tể API",
+      description: "Chúa tể API <p>Role Admin: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OTUsIm5hbWUiOiJ0ZXN0IiwiZW1haWwiOiJhZG1pbm5AZ21haWwuY29tIiwicGhvbmUiOiIwMzIzNTU0MzQzIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNjM4NDI5OTQyfQ.YfsjDeoPKvhY2GEoTOql6L_RHtQywVK5MB2MOjPfhRY</p>",
       version: "1.0.0",
       termsOfService: "",
       contact: {

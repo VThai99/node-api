@@ -13,6 +13,7 @@ const authorize = require("../common/authorization/authorization-middleware");
  * /user:
  *  get:
  *      tags: [User]
+ *      summary: get all users
  *      security:
  *          - Bearer: []
  *      parameters:
@@ -26,6 +27,22 @@ const authorize = require("../common/authorization/authorization-middleware");
  *            in: query
  *            schema:
  *                  type: integer
+ *          - name: name
+ *            in: query
+ *            chema:
+ *                  type: text
+ *          - name: email
+ *            in: query
+ *            chema:
+ *                  type: text
+ *          - name: phone
+ *            in: query
+ *            chema:
+ *                  type: text
+ *          - name: role
+ *            in: query
+ *            chema:
+ *                  type: text
  *      responses:
  *          default:
  *              description: this is the default response
