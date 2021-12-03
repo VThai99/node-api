@@ -4,6 +4,7 @@ const controller = require("../controllers/CategoryController");
 const fileUploader = require("../common/cloudy/cloudinary");
 const authorize = require("../common/authorization/authorization-middleware");
 
+// aaaaaa
 router.get("", controller.getAllCategory);
 router.get("/:id", controller.getProductInCate);
 router.post("",authorize("ADMIN") ,fileUploader.single("image"), controller.createCategory);
