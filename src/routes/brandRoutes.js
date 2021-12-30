@@ -3,7 +3,7 @@ const router = express.Router();
 const controller = require("../controllers/BrandController");
 const fileUploader = require("../common/cloudy/cloudinaryBrand");
 const authorize = require("../common/authorization/authorization-middleware");
-
+const uploadController = require("../controllers/CloudinaryController")
 /**
  * @swagger
  * tags:
@@ -66,22 +66,24 @@ router.get("/:id", controller.getProductInBrand);
  *      security:
  *          - Bearer: []
  *      summary: create new brand
- *      consumes:
- *          - multipart/form-data
  *      parameters:
- *          - name: name
- *            in: formData
- *            chema:
- *                  type: integer
- *            required: true 
- *          - name: logo
- *            in: formData
- *            type: file
+ *          - name: body
+ *            in: body
+ *            schema:
+ *                  type: object
+ *                  properties:
+ *                      name:
+ *                          type: string
+ *                      logo:
+ *                          type: string
+ *            required:
+ *                  - name
+ *                  - logo
  *      responses:
  *          default:
  *              description: this is the default response
  */
-router.post("",authorize("ADMIN") ,fileUploader.single("logo"), controller.createBrand);
+router.post("",authorize("ADMIN") , controller.createBrand);
 
 /**
  * @swagger
@@ -94,27 +96,28 @@ router.post("",authorize("ADMIN") ,fileUploader.single("logo"), controller.creat
  *      security:
  *          - Bearer: []
  *      summary: update info brand
- *      consumes:
- *          - multipart/form-data
  *      parameters:
  *          - name: id
  *            in: path
- *            chema:
- *                  type: integer
- *            required: true 
- *          - name: name
- *            in: formData
- *            chema:
- *                  type: integer
- *            required: true 
- *          - name: logo
- *            in: formData
- *            type: file
+ *            type: number
+ *            required: true
+ *          - name: body
+ *            in: body
+ *            schema:
+ *                  type: object
+ *                  properties:
+ *                      name:
+ *                          type: string
+ *                      logo:
+ *                          type: string
+ *            required:
+ *                  - name
+ *                  - logo
  *      responses:
  *          default:
  *              description: this is the default response
  */
-router.put("/:id",authorize("ADMIN"),fileUploader.single("logo"),controller.updateBrand);
+router.put("/:id",authorize("ADMIN"),controller.updateBrand);
 
 /**
  * @swagger
@@ -138,5 +141,23 @@ router.put("/:id",authorize("ADMIN"),fileUploader.single("logo"),controller.upda
  *              description: this is the default response
  */
 router.delete("/:id", authorize("ADMIN"),controller.deleteBrand);
+
+/**
+ * @swagger
+ * /brand/uploadUrl:
+ *  post:
+ *      tags: [Brand]
+ *      summary: upload image
+ *      consumes:
+ *          - multipart/form-data
+ *      parameters:
+ *          - name: image
+ *            in: formData
+ *            type: file
+ *      responses: 
+ *          default:
+ *              description: this is the default response
+ */
+router.post("/uploadUrl",fileUploader.single("image"),uploadController.uploadBrand);
 
 module.exports = router;

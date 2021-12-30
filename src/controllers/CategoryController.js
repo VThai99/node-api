@@ -54,7 +54,7 @@ const createCategory = async (req, res, next) => {
     var db = req.conn;
     var data = {
       name: req.body.name,
-      image: req.file.path,
+      image: req.body.image,
     };
     let results = db.query(
       "insert into category set ?",
@@ -127,7 +127,7 @@ const updateCategory = async (req, res, next) => {
     var id = req.params.id;
     var dataUpdate = {
       name: req.body.name,
-      image: req.file.path,
+      image: req.body.image,
     };
     let checkExist = db.query(
       "select * from category where id = ?",

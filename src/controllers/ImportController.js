@@ -3,6 +3,7 @@ const {
   timeClause,
   removeLastAnd,
 } = require("../common/query/make_greate_query");
+const excel = require('exceljs')
 const getAllImport = (req, res, next) => {
   try {
     var db = req.conn;
@@ -122,7 +123,86 @@ const createImport = (req, res, next) => {
     });
   }
 };
+
+const downloadImport = (req, res, next) => {
+  try {
+    var db = req.conn;
+    var startDate = req.query.startDate ? req.query.startDate : null;
+    var endDate = req.query.endDate ? req.query.endDate : null;
+    var fillPName = req.query.product
+      ? req.query.product.replace(/"/g, "")
+      : null;
+    var fillUName = req.query.importer
+      ? req.query.importer.replace(/"/g, "")
+      : null;
+    var sqlQuery = `select i.*, u.name as user_name, p.name as product_name, pt.type as product_type, pt.color as product_color 
+    from 
+    import i left join user u on i.importer = u.id left join product_type pt on i.product_id = pt.id left join product p on p.id = pt.product_id
+    where 
+     ${likeClause("p.name", fillPName)} 
+     ${likeClause("u.name", fillUName)} 
+     ${timeClause("i.time_import",startDate,endDate)}
+    `;
+    let getAllElements = db.query(removeLastAnd(sqlQuery), (err, orders) => {
+      if (err) console.log("err when get all element");
+      else {
+        var totalElements = orders.length;
+        let results = db.query(
+          `${removeLastAnd(sqlQuery)} order by time_import desc`,
+          (err, respond) => {
+            if (err) console.log("error");
+            else {
+              let downloadArray = [];
+              respond.forEach(item => {
+                downloadArray.push({
+                  id: item.id,
+                  productId: item.product_id,
+                  productName: item.product_name,
+                  productType: item.product_type,
+                  productColor: item.product_color,
+                  importer: item.user_name,
+                  quantity: item.quantity,
+                  status: item.status
+                })
+              });
+              let workbook = new excel.Workbook();
+              let worksheet = workbook.addWorksheet("Imports")
+              worksheet.columns = [
+                { header: "Id", key: "id", width: 5 },
+                { header: "Product Id", key: "productId", width: 15 },
+                { header: "Product Name", key: "productName", width: 15 },
+                { header: "Product Type", key: "productType", width: 15 },
+                { header: "Product Color", key: "productColor", width: 15 },
+                { header: "Importer", key: "importer", width: 10 },
+                { header: "Quantity", key: "quantity", width: 10 },
+                { header: "Status", key: "status", width: 15 },
+              ]
+              worksheet.addRows(downloadArray)
+              res.setHeader(
+                "Content-Type",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              );
+              res.setHeader(
+                "Content-Disposition",
+                "attachment; filename=" + "importer.xlsx"
+              );
+          
+              return workbook.xlsx.write(res).then(function () {
+                res.status(200).end();
+              });
+            }
+          }
+        );
+      }
+    });
+  } catch (err) {
+    res.send({
+      message: "something wrong",
+    });
+  }
+};
 module.exports = {
   getAllImport,
   createImport,
+  downloadImport
 };

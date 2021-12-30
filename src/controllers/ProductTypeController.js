@@ -1,5 +1,3 @@
-const e = require("express");
-
 const getAllProductType = (req, res, next) => {
   try {
     var db = req.conn;
@@ -22,7 +20,7 @@ const createProductType = (req, res, next) => {
     var productId = req.params.pId;
     var data = {
       product_id: productId,
-      image: req.file.path,
+      image: req.body.image,
       price: req.body.price,
       quantity: req.body.quantity ? req.body.quantity : 0,
       color: req.body.color,
@@ -54,7 +52,7 @@ const updateProductType = (req, res, next) => {
     var id = req.params.id;
     var data = {
       product_id: productId,
-      image: req.file.path,
+      image: req.body.image,
       price: req.body.price,
       quantity: req.body.quantity ? req.body.quantity : 0,
       color: req.body.color,

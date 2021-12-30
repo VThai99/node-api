@@ -131,15 +131,9 @@ const getAllProductClient = (req, res, next) => {
 const createProduct = async (req, res, next) => {
   try {
     var db = req.conn;
-    var stringUrl = []
-    req.files.forEach((item)=>{
-      stringUrl.push(item.path)
-    })
-    var imageurl = (JSON.stringify(stringUrl));
-    console.log(imageurl);
     var data = {
       name: req.body.name,
-      image: imageurl,
+      image: req.body.image,
       cate_id: req.body.cate_id,
       brand_id: req.body.brand_id,
       digital_detail: req.body.digital_detail,
@@ -223,14 +217,9 @@ const updateProduct = async (req, res, next) => {
   try {
     var db = req.conn;
     let id = req.params.id;
-    var stringUrl = []
-    req.files.forEach((item)=>{
-      stringUrl.push(item.path)
-    })
-    var imageurl = (JSON.stringify(stringUrl));
     var data = {
       name: req.body.name,
-      image: imageurl,
+      image: req.body.image,
       cate_id: req.body.cate_id,
       brand_id: req.body.brand_id,
       digital_detail: req.body.digital_detail,

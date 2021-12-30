@@ -53,7 +53,7 @@ const createBrand = async (req, res, next) => {
     var db = req.conn;
     var data = {
       name: req.body.name,
-      logo: req.file.path,
+      logo: req.body.logo,
     };
     let results = db.query(
       "insert into brand set ?",
@@ -120,7 +120,7 @@ const updateBrand = async (req, res, next) => {
     var id = req.params.id;
     var dataUpdate = {
       name: req.body.name,
-      logo: req.file.path,
+      logo: req.body.logo,
     };
     let checkExist = db.query(
       "select * from brand where id = ?",

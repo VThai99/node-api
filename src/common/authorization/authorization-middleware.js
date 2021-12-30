@@ -6,7 +6,7 @@ module.exports = (roleRequire) => {
     if (!token) {
       return res.send({
         status: 401,
-        message: "access denied",
+        message: "Access Denied",
       });
     } else {
       const tokenBody = token.slice(7);
