@@ -88,7 +88,6 @@ app.use("/api/import", importRoutes);
 app.use("/api/comment", commentRoutes);
 app.use("/api/rating", ratingRoutes);
 app.use("/api/productType", productTypeRoutes);
-
 app.listen(port, () => {
   console.log(`Server is running at port ${port}`);
 });
