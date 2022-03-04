@@ -288,7 +288,12 @@ const resetPassword = (req, res, next) => {
   try {
     var db = req.conn;
     var email = req.query.email;
-    var newPass = Math.random().toString(36).slice(-8);
+    var newPass = Array(10)
+      .fill("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+      .map(function (x) {
+        return x[Math.floor(Math.random() * x.length)];
+      })
+      .join("");
     const passChange = bcrypt.hash(newPass, 12);
 
     db.query(`select * from user where email = '${email}'`, (err, respond) => {
@@ -358,5 +363,5 @@ module.exports = {
   vertifyEmail,
   deleteUser,
   updateUser,
-  resetPassword
+  resetPassword,
 };
