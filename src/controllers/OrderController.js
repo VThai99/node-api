@@ -283,10 +283,42 @@ const updateShipCode = async (req, res, next) => {
     });
   }
 };
+const makeCompleted = async (req, res, next) => {
+  try {
+    var db = req.conn;
+    var id = req.params.id;
+    let checkOrderExist = db.query(
+      "select * from orders where id = ?",
+      id,
+      (err, order) => {
+        if (err) console.log("error when check exist order");
+        else {
+          let dataUpdate = {
+            status: "COMPLETED",
+          };
+          db.query(
+            `update orders set ? where id = ?`,
+            [dataUpdate, id],
+            (err, respond) => {
+              err
+                ? res.status(400).send({ message: "error" })
+                : res.status(200).send({ message: "success" });
+            }
+          );
+        }
+      }
+    );
+  } catch (err) {
+    res.send({
+      message: "something wrong",
+    });
+  }
+};
 module.exports = {
   getAllOrder,
   createOrder,
   deleteOrder,
   getOrderDetail,
   updateShipCode,
+  makeCompleted
 };
