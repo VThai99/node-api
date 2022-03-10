@@ -355,6 +355,29 @@ const resetPassword = async (req, res, next) => {
     res.status(400).send({ message: "something wrong" });
   }
 };
+const getUser = async (req, res, next) => {
+  try {
+    var db = req.conn;
+    let id = req.params.id;
+    let results = db.query(
+      `select * from user where id = ${id}`,
+      (err, respond) => {
+        if (err) console.log("error");
+        else {
+          res.send({
+            status: 200,
+            message: "success",
+            data: respond,
+          });
+        }
+      }
+    );
+  } catch (err) {
+    res.send({
+      message: "Something wrong",
+    });
+  }
+};
 module.exports = {
   createAccount,
   getAllUser,
@@ -363,4 +386,5 @@ module.exports = {
   deleteUser,
   updateUser,
   resetPassword,
+  getUser
 };
