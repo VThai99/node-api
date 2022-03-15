@@ -212,6 +212,7 @@ const vertifyEmail = (req, res, next) => {
         console.log("Email sent: " + info.response);
         res.send({
           status: 200,
+          code: code,
           message: "vertify email success",
         });
       }
